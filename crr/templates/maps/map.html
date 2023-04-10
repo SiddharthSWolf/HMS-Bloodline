@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Get User Location using LeafletJS</title>
+    <!-- Load Leaflet CSS and JavaScript -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <div id="mapid" style="height: 500px"></div>
+    <br />
+    <br />
+    <div id="live-coords">
+      <label for="latlong">Latitude, Longitude:</label>
+      <input type="text" id="latlong" name="latlong" readonly />
+    </div>
+
+    <script src="people.data"></script>
+    <script src="places.json"></script>
+    <script>
+      const peopleData = "people.json";
+      const placesData = "places.json";
+      const distanceLimit = 5; // in kilometers
+
+      // Initialize the Leaflet map and set the view to the user's location
+      var map = L.map("mapid").setView([10.9825, 76.9692], 12);
+
+      // Add a tile layer to the map
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        maxZoom: 18,
+      }).addTo(map);
+
+      // Get the user's location using the browser's geolocation API
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          // Get the latitude and longitude values from the position object
+          var lat = position.coords.latitude;
+          var lng = position.coords.longitude;
+
+          // Set the map view to the user's location
+          map.setView([lat, lng], 13);
+
+          // Add a marker to the map at the user's location
+          var marker = L.marker([lat, lng]).addTo(map);
+
+          // Set the value of the text field to the latitude and longitude values
+          document.getElementById("latlong").value = lat + ", " + lng;
+        },
+        function (error) {
+          // If the user denies access to their location, show an error message
+          alert("Error getting user location: " + error.message);
+        }
+      );
+
+      fetch("places.json")
+        .then((response) => response.json())
+        .then((data) => {
+          // Create markers for each place in the JSON data
+          data.places.forEach((place) => {
+            var marker = L.marker(place.coordinates, { color: "red" }).addTo(
+              map
+            );
+            marker.setIcon(
+              L.icon({
+                iconUrl:
+                  "https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+              })
+            ); // Set the marker color to red
+
+            marker.bindPopup(place.name);
+          });
+        });
+
+      fetch("people.json")
+        .then((response) => response.json())
+        .then((data) => {
+          // Loop through each person in the data
+          data.people.forEach((person) => {
+            // Create a marker for the person with a default red color
+            var marker = L.marker(person.coordinates, { color: "red" }).addTo(
+              map
+            );
+            marker.setIcon(
+              L.icon({
+                iconUrl:
+                  "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-black.png",
+              })
+            ); // Set the marker color to gray
+
+            marker.bindPopup(person.name);
+
+            // Check if the person is within 10km of any location in places.json
+            fetch("places.json")
+              .then((response) => response.json())
+              .then((data) => {
+                data.places.forEach((place) => {
+                  // Use the Haversine formula to calculate the distance between the person and the place
+                  var R = 6371; // Radius of the earth in km
+                  var dLat = deg2rad(
+                    place.coordinates[0] - person.coordinates[0]
+                  );
+                  var dLon = deg2rad(
+                    place.coordinates[1] - person.coordinates[1]
+                  );
+                  var a =
+                    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(deg2rad(person.coordinates[0])) *
+                      Math.cos(deg2rad(place.coordinates[0])) *
+                      Math.sin(dLon / 2) *
+                      Math.sin(dLon / 2);
+                  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                  var d = R * c; // Distance in km
+
+                  // If the person is within 10km of the place, set the marker color to green
+                  if (d <= distanceLimit) {
+                    marker.setIcon(
+                      L.icon({
+                        iconUrl:
+                          "https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+                      })
+                    );
+                  } else if (d <= distanceLimit + 5) {
+                    marker.setIcon(
+                      L.icon({
+                        iconUrl:
+                          "https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png",
+                      })
+                    );
+                  }
+
+                  //https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-gold.png
+                  //if user not online, last location. code here.
+                });
+              });
+          });
+        });
+
+      // Function to convert degrees to radians
+      function deg2rad(deg) {
+        return deg * (Math.PI / 180);
+      }
+
+      /*
+
+      var username = "John"; // the username to match
+      var map = L.map("mapid").setView([51.505, -0.09], 13);
+
+      // create some markers with popups
+      var marker1 = L.marker([51.5, -0.09]).addTo(map).bindPopup("Hello John!");
+      var marker2 = L.marker([51.51, -0.1])
+        .addTo(map)
+        .bindPopup("Hello Alice!");
+
+      // loop through all markers on the map
+      map.eachLayer(function (layer) {
+        if (layer instanceof L.Marker) {
+          // check if layer is a marker
+          var popupContent = layer.getPopup().getContent(); // get popup content
+          if (popupContent.includes(username)) {
+            // check if popup matches username
+            layer.setLatLng([51.49, -0.08]); // change location of marker
+          }
+        }
+      });
+
+      */
+
+    </script>
+  </body>
+</html>

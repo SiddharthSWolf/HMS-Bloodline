@@ -1,4 +1,4 @@
-from flask import flash, redirect, url_for, render_template, request, abort
+from flask import flash, redirect, url_for, render_template, request, abort, send_from_directory, jsonify
 from flask_login import login_user, current_user, logout_user, login_required
 from crr.forms import RegistrationForm, LoginForm, UpdateAccountForm, ReportForm, ReportUpdateForm, RequestResetForm, ResetPasswordForm, PrescribesForm, AppointmentForm
 from crr.models import User, Report, Prescribes, Appointments, Product
@@ -6,6 +6,8 @@ from crr import app, db, bcrypt, mail
 from flask_mail import Message
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+import os
+import json
 
 @app.route("/")
 @app.route("/index")
@@ -152,7 +154,7 @@ def delete_report(report_id):
     db.session.commit()
     flash('Your report has been deleted!', 'success')
     return redirect(url_for('home'))
- 
+
 def send_reset_email(user):
     token = user.get_reset_token()
     message = Mail(
@@ -202,3 +204,33 @@ def reset_token(token):
         return redirect(url_for('login'))
     return render_template('reset_token.html', title = 'Reset Password', form = form)
 
+
+#rooms.
+@app.route('/rooms.json', methods=['GET', 'POST', 'PUT'])
+def get_rooms():
+    json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates', 'rooms', 'rooms.json')
+    if request.method == 'PUT' or request.method == 'POST':
+        data = request.get_json()
+        if os.path.exists(json_path):
+            with open(json_path, 'w') as f:
+                json.dump(data, f)
+            return jsonify({'message': 'Rooms updated successfully'})
+        else:
+            return jsonify({'message': 'JSON file not found'})
+    else:
+        return send_from_directory(os.path.dirname(json_path), os.path.basename(json_path))
+
+
+@app.route('/rooms', methods=['GET', 'POST', 'PUT'])
+def update_rooms():
+    if request.method == 'PUT' or request.method == 'POST':
+        json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates', 'rooms', 'rooms.json')
+        data = request.get_json()
+        if os.path.exists(json_path):
+            with open(json_path, 'w') as f:
+                json.dump(data, f)
+            return jsonify({'message': 'Rooms updated successfully'})
+        else:
+            return jsonify({'message': 'JSON file not found'})
+        
+    return render_template('/rooms/rooms.html')
