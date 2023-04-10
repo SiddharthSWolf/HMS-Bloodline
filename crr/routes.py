@@ -105,33 +105,28 @@ def add_product():
         flash('Product added successfully!', 'success')
         return redirect(url_for('products'))
 
-    return render_template('add_product.html', form=form)
+    return render_template('add_product.html', form=form, legend = 'Add products')
 
 @app.route("/product/<int:product_id>/update", methods=['GET', 'POST'])
 @login_required
 def update_product(product_id):
     product = Product.query.get_or_404(product_id)
-    form = ProductUpdateForm()
-    if form.validate_on_submit():
-        product.name = form.name.data
-        product.id = form.id.data
-        product.composition = form.composition.data
-        product.b_date = form.bdate.data
-        product.edate = form.edate.data
-        product.quantity = form.quantity.data
-        product.price = form.price.data
+    form = ProductUpdateForm(obj=product)
+    if request.method == 'POST' and form.validate_on_submit():
+        form.populate_obj(product)
+        product = Product(
+        id = form.id.data,
+        name=form.name.data,
+        composition=form.composition.data,
+        bdate=form.bdate.data,
+        edate=form.edate.data,
+        quantity=form.quantity.data,
+        price=form.price.data)
         db.session.commit()
         flash('The product was updated successfully!', 'success')
-        return redirect(url_for('update_product', product_id=product.id))
-    elif request.method == 'GET':
-        form.name.data = product.name
-        form.id.data = product.id
-        form.composition.data = product.composition
-        form.bdate.data = product.bdate
-        form.edate.data = product.edate
-        form.quantity.data = product.quantity
-        form.price.data = product.price
-    return render_template('update_product.html', form=form)
+        return redirect(url_for('products', product_id=product.id))
+    return render_template('update_product.html', form=form, legend='Update Product')
+
 
 @app.route("/products/<int:product_id>/delete", methods=['POST'])
 @login_required
