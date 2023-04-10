@@ -205,7 +205,7 @@ def reset_token(token):
     return render_template('reset_token.html', title = 'Reset Password', form = form)
 
 
-#rooms.
+#room
 @app.route('/rooms.json', methods=['GET', 'POST', 'PUT'])
 def get_rooms():
     json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates', 'rooms', 'rooms.json')

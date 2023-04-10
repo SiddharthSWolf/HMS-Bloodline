@@ -73,8 +73,8 @@
               <div class="col-md-3">
                 <label for="isOccupied" class="form-label">is Occupied</label>
                 <select class="form-select" id="isOccupied" name="isOccupied">
-                  <option value="true">true</option>
-                  <option value="false">false</option>
+                  <option value=true>true</option>
+                  <option value=false>false</option>
                 </select>
               </div>
             </div>
@@ -212,7 +212,7 @@
             button.textContent = room.roomNumber;
             button.id = room.roomNumber;
             button.classList.add("room-button");
-            button.classList.add(room.isOccupied ? "occupied" : "vacant");
+            button.classList.add(room.isOccupied === "true" ? "occupied" : "vacant");
             roomButtons.appendChild(button);
           });
         })
@@ -299,7 +299,7 @@
               data.rooms[roomIndex].roomType = roomType;
               data.rooms[roomIndex].costPerDay = Number(costPerDay);
               data.rooms[roomIndex].maxOccupancy = Number(maxOccupancy);
-              data.rooms[roomIndex].isOccupied = isOccupied;
+              data.rooms[roomIndex].isOccupied = isOccupied === "true";
               data.rooms[roomIndex].amenities = amenities;
               data.rooms[roomIndex].patient.name = name;
               data.rooms[roomIndex].patient.age = Number(patientAge);
@@ -307,6 +307,15 @@
               data.rooms[roomIndex].patient.admissionDate = admissionDate;
               data.rooms[roomIndex].patient.vacatingDate = vacatingDate;
               data.rooms[roomIndex].notes = notes;
+              
+              if(isOccupied === "false"){
+                data.rooms[roomIndex].patient.name = null;
+                data.rooms[roomIndex].patient.age = null;
+                data.rooms[roomIndex].patient.gender = null;
+                data.rooms[roomIndex].patient.admissionDate = null;
+                data.rooms[roomIndex].patient.vacatingDate = null;
+                data.rooms[roomIndex].notes = null;
+              }
 
               // Save the updated JSON file
               fetch("rooms.json", {
