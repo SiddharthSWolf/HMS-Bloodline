@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField, DateTimeField
 from wtforms.validators import DataRequired,Length, Email,EqualTo, ValidationError
 from crr.models import User
 from flask_login import current_user
@@ -55,6 +55,28 @@ class UpdateAccountForm(FlaskForm):
             email = User.query.filter_by(email=email.data).first()
             if email:
                 raise ValidationError('An account already exists with that Email.')
+
+
+class ProductForm(FlaskForm):
+    id = StringField('ID', validators = [DataRequired()])
+    name = StringField('Name', validators = [DataRequired()])
+    composition = StringField('Composition', validators = [DataRequired()])
+    edate = DateTimeField('Expiry Date', validators = [DataRequired()])
+    bdate = DateTimeField('Bought on', validators = [DataRequired()])
+    quantity = StringField('Quantity in Cartons', validators = [DataRequired()])
+    price = StringField('Price per Strip', validators = [DataRequired()])
+    submit = SubmitField('Add Product')
+
+
+class ProductUpdateForm(FlaskForm):
+    id = StringField('ID', validators = [DataRequired()])
+    composition = StringField('Composition', validators = [DataRequired()])
+    name = StringField('Name', validators = [DataRequired()])
+    edate = DateTimeField('Expiry Date', validators = [DataRequired()])
+    bdate = DateTimeField('Bought on', validators = [DataRequired()])
+    quantity = StringField('Quantity in Cartons', validators = [DataRequired()])
+    price = StringField('Price per Strip', validators = [DataRequired()])
+    submit = SubmitField('Update Product')
 
 
 class ReportForm(FlaskForm):

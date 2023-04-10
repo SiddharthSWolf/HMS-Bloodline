@@ -1,8 +1,10 @@
-from flask import flash, redirect, url_for, render_template, request, abort, send_from_directory, jsonify
+from flask import flash, redirect, url_for, render_template, request, abort, Blueprint, send_from_directory, jsonify
 from flask_login import login_user, current_user, logout_user, login_required
-from crr.forms import RegistrationForm, LoginForm, UpdateAccountForm, ReportForm, ReportUpdateForm, RequestResetForm, ResetPasswordForm, PrescribesForm, AppointmentForm
-from crr.models import User, Report, Prescribes, Appointments, Product
+from crr.forms import RegistrationForm, LoginForm, UpdateAccountForm, ReportForm, ReportUpdateForm, RequestResetForm, ResetPasswordForm, PrescribesForm, AppointmentForm, ProductForm,ProductUpdateForm
+from crr.models import User, Report, Prescribes, Appointment, Product
 from crr import app, db, bcrypt, mail
+from sqlalchemy.exc import StatementError
+from datetime import datetime
 from flask_mail import Message
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
@@ -72,9 +74,122 @@ def account():
     return render_template('account.html', title='Account', image_file= image_file, form=form)
 
 @app.route('/products')
+@login_required
 def products():
-    products = Product.query.all()
-    return render_template('products.html', product=products)
+    product = Product.query.all()
+    return render_template('products.html', Products=product)
+    
+@app.route('/add_product', methods=['GET','POST'])
+@login_required
+def add_product():
+    form = ProductForm()
+    if request.method == 'POST':
+        try:
+            product = Product(
+                id = form.id.data,
+                name=form.name.data,
+                composition=form.composition.data,
+                bdate=form.bdate.data,
+                edate=form.edate.data,
+                quantity=form.quantity.data,
+                price=form.price.data
+            )
+            db.session.add(product)
+            db.session.commit()
+            flash('Product added successfully!', 'success')
+            return redirect(url_for('products'))
+        except StatementError as e:
+            db.session.rollback()
+            flash(f"Error: {str(e)}", "danger")
+        db.session.add(product)
+        db.session.commit()
+
+        flash('Product added successfully!', 'success')
+        return redirect(url_for('products'))
+
+    return render_template('add_product.html', form=form, legend = 'Add products')
+
+@app.route("/product/<int:product_id>/update", methods=['GET', 'POST'])
+@login_required
+def update_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    form = ProductUpdateForm(obj=product)
+    if request.method == 'POST' and form.validate_on_submit():
+        form.populate_obj(product)
+        product = Product(
+        id = form.id.data,
+        name=form.name.data,
+        composition=form.composition.data,
+        bdate=form.bdate.data,
+        edate=form.edate.data,
+        quantity=form.quantity.data,
+        price=form.price.data)
+        db.session.commit()
+        flash('The product was updated successfully!', 'success')
+        return redirect(url_for('products', product_id=product.id))
+    return render_template('update_product.html', form=form, legend='Update Product')
+
+
+@app.route("/products/<int:product_id>/delete", methods=['POST'])
+@login_required
+def delete_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    db.session.delete(product)
+    db.session.commit()
+    flash('The product has been deleted!', 'success')
+    return redirect(url_for('products', product_id=product.id))
+
+@app.route('/appointments', methods=['GET', 'POST'])
+@login_required
+def appointments():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        time_slot = request.form['time_slot']
+
+        if not Appointment.is_time_slot_available(time_slot):
+            flash('This time slot is not available. Please choose another time.')
+            return redirect(url_for('appointments'))
+
+        appointment = Appointment(name=name, email=email, time_slot=time_slot)
+
+        db.session.add(appointment)
+        db.session.commit()
+
+        flash('Appointment booked successfully!', 'success')
+        return redirect(url_for('appointments'))
+
+    time_slots = [
+        ('10:00-11:00', '10:00-11:00'),
+        ('11:00-12:00', '11:00-12:00'),
+        ('12:00-13:00', '12:00-13:00'),
+        ('13:00-14:00', '13:00-14:00'),
+        ('14:00-15:00', '14:00-15:00'),
+        ('15:00-16:00', '15:00-16:00')
+    ]
+
+    appointments = Appointment.query.order_by(Appointment.time_slot).all()
+
+    return render_template('appointments.html', time_slots=time_slots, appointments=appointments, legend = "Appointment")
+
+
+@app.route('/appointments/<int:appointment_id>')
+@login_required
+def show(appointment_id):
+    appointment = Appointment.query.get(appointment_id)
+    return render_template('show.html', appointment=appointment)
+
+
+@app.route('/appointments/<int:appointment_id>/delete', methods=['POST'])
+@login_required
+def appointment_delete(appointment_id):
+    appointment = Appointment.query.get_or_404(appointment_id)
+
+    db.session.delete(appointment)
+    db.session.commit()
+
+    flash('Appointment deleted successfully!', 'success')
+    return redirect(url_for('appointments'))
 
 @app.route("/report/new", methods = ['GET', 'POST'])
 @login_required
@@ -100,19 +215,8 @@ def new_prescribes():
         return redirect(url_for('home'))
     return render_template('new_prescribes.html', title = 'New Prescribe', form = form, legend ='New Prescribe')
 
-@app.route("/appointments/new", methods = ['GET', 'POST'])
-@login_required
-def new_appointments():
-    form = AppointmentForm()
-    if form.validate_on_submit():
-        appointments = Appointments(title = form.title.data, user_id = '404', author = current_user)
-        db.session.add(appointments)
-        db.session.commit()
-        flash('Your appointment has been created!', 'success')
-        return redirect(url_for('home'))
-    return render_template('new_appointment.html', title = 'New Appointment', form = form, legend ='New Appointment')
-
 @app.route("/report/<int:report_id>")
+@login_required
 def report(report_id):
     report = Report.query.get_or_404(report_id)
     return render_template('report.html', title = report.title, report = report)

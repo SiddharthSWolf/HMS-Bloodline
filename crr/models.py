@@ -220,11 +220,28 @@ class Appointments(db.Model):
         return f"Appointments('{self.title}', '{self.date_posted}')"
 
 class Product(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-    description = db.Column(db.String(120))
-    quantity = db.Column(db.Integer)
-    price = db.Column(db.Float)
+    id = db.Column(db.Integer, primary_key=True, unique = True, nullable = False)
+    name = db.Column(db.String(80),unique = True, nullable = False)
+    composition = db.Column(db.String(120),unique = True, nullable = False)
+    bdate = db.Column(db.DateTime, unique = False, nullable = False, default = datetime.utcnow)
+    edate = db.Column(db.DateTime, unique = False, nullable = False, default = datetime.utcnow)
+    quantity = db.Column(db.Integer, unique = False, nullable = False)
+    price = db.Column(db.Float, unique = False, nullable = False)
 
     def __repr__(self):
         return '<Product %r>' % self.name
+    
+class Appointment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    time_slot = db.Column(db.String(20), nullable=False, unique=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    @classmethod
+    def is_time_slot_available(cls, time_slot):
+        appointments = cls.query.filter_by(time_slot=time_slot).all()
+        return len(appointments) == 0
+
+    def __repr__(self):
+        return f'<Appointment {self.id}>'
