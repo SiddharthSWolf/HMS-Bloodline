@@ -56,6 +56,8 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
 @app.route("/")
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
@@ -114,19 +116,25 @@ def add_product():
 def update_product(product_id):
     product = Product.query.get_or_404(product_id)
     form = ProductUpdateForm(obj=product)
-    if request.method == 'POST' and form.validate_on_submit():
-        form.populate_obj(product)
-        product = Product(
-        id = form.id.data,
-        name=form.name.data,
-        composition=form.composition.data,
-        bdate=form.bdate.data,
-        edate=form.edate.data,
-        quantity=form.quantity.data,
-        price=form.price.data)
+    if form.validate_on_submit():
+        product.id = form.id.data
+        product.name = form.name.data
+        product.composition = form.composition.data
+        product.bdate = form.bdate.data
+        product.edate = form.edate.data
+        product.quantity = form.quantity.data
+        product.price = form.price.data
         db.session.commit()
-        flash('The product was updated successfully!', 'success')
-        return redirect(url_for('products', product_id=product.id))
+        flash('The product was updated!', 'success')
+        return redirect(url_for('products'))
+    elif request.method == 'GET':
+        form.id.data = product.id
+        form.name.data = product.name
+        form.composition.data = product.composition
+        form.bdate.data = product.bdate
+        form.edate.data = product.edate
+        form.quantity.data = product.quantity
+        form.price.data = product.price
     return render_template('update_product.html', form=form, legend='Update Product')
 
 
@@ -203,17 +211,23 @@ def new_report():
         return redirect(url_for('home'))
     return render_template('new_report.html', title = 'New Report', form = form, legend ='New Report')
 
+@app.route('/prescribes')
+@login_required
+def prescribes():
+    prescribe = Prescribes.query.all()
+    return render_template('prescribes.html', Prescribes=prescribe, legend = 'Prescription')
+
 @app.route("/prescribes/new", methods = ['GET', 'POST'])
 @login_required
 def new_prescribes():
     form = PrescribesForm()
     if form.validate_on_submit():
-        prescribes = Prescribes(title = form.title.data, user_id = '404', author = current_user)
+        prescribes = Prescribes(id = form.id.data, medication = form.medication.data, breakfast = form.breakfast.data, lunch = form.lunch.data, dinner = form.dinner.data, dosage = form.dosage.data, quantity = form.quantity.data, price = form.price.data)
         db.session.add(prescribes)
         db.session.commit()
         flash('Your prescribe has been created!', 'success')
-        return redirect(url_for('home'))
-    return render_template('new_prescribes.html', title = 'New Prescribe', form = form, legend ='New Prescribe')
+        return redirect(url_for('prescribes'))
+    return render_template('new_prescribes.html', title = 'New Prescribe', form = form, legend ='New Prescription')
 
 @app.route("/report/<int:report_id>")
 @login_required

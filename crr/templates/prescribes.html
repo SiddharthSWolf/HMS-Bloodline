@@ -1,0 +1,84 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="content-section">
+<legend class="border-bottom mb-4">{{ legend }}</legend>
+
+    {% if appointments %}
+        <hr>
+
+        <legend class="border-bottom mb-4">{{ legend }}</legend>
+
+        <table class="content-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Medication</th>
+                    <th>Dosage</th>
+                    <th>Breakfast</th>
+                    <th>Lunch</th>
+                    <th>Dinner</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prescribe in Prescibes %}
+                    <tr>
+                        <td>{{ prescribe.id }}</td>
+                        <td>{{ prescribe.medication }}</td>
+                        <td>{{ prescribe.dosage }}</td>
+                        <td>{{ prescribe.breakfast }}</td>
+                        <td>{{ prescribe.lunch }}</td>
+                        <td>{{ prescribe.dinner }}</td>
+                        <td>{{ prescribe.quantity }}</td>
+                        <td>{{ prescribe.price }}</td>
+                        <td>
+        <button type="button" class="btn btn-warning btn-sm m-1" data-toggle="modal" data-target="#updateModal{{ loop.index }}">Update</button>
+        <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal{{ loop.index }}">Delete</button>
+    </td>
+</tr>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ loop.index }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel{{ loop.index }}">Are you sure, you want to delete this prescription?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                <form action="{{ url_for('appointment_delete', appointment_id=appointment.id) }}" method="POST">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="updateModal{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel{{ loop.index }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateModalLabel{{ loop.index }}">Are you sure, you want to update this prescription?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                <form action="{{ url_for('update_product', product_id=product.id) }}" method="POST">
+                    <button type="submit" class="btn btn-warning">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

@@ -85,8 +85,15 @@ class ReportForm(FlaskForm):
     submit = SubmitField('Report')
     
 class PrescribesForm(FlaskForm):
-    title = StringField('Title',validators=[DataRequired()])
-    submit = SubmitField('Prescribes')
+    id = StringField('ID',validators=[DataRequired()])
+    medication = StringField('Medication',validators=[DataRequired()])
+    breakfast = StringField('Breakfast', validators = [DataRequired()])
+    lunch = StringField('Lunch', validators = [DataRequired()])
+    dinner = StringField('Dinner', validators = [DataRequired()])
+    dosage = StringField('Dosage', validators = [DataRequired()])
+    quantity = StringField('Quantity in stips', validators = [DataRequired()])
+    price = StringField('Price per Strip', validators = [DataRequired()])
+    submit = SubmitField('Add prescription')
 
 class AppointmentForm(FlaskForm):
     title = StringField('Date',validators=[DataRequired()])

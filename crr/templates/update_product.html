@@ -19,19 +19,6 @@
               {% endif %}
           </div>
           <div class="form-group">
-              {{ form.id.label(class="form-control-label") }}
-              {% if form.id.errors %}
-                  {{ form.id(class="form-control form-control-lg is-invalid") }}
-                  <div class="invalid-feedback">
-                      {% for error in form.id.errors %}
-                          <span>{{ error }}</span>
-                      {% endfor %}
-                  </div>
-              {% else %}
-                  {{ form.id(class="form-control form-control-lg") }}
-              {% endif %}
-          </div>
-          <div class="form-group">
             {{ form.bdate.label(class="form-control-label") }}
             {% if form.bdate.errors %}
                 {{ form.bdate(class="form-control form-control-lg is-invalid") }}
