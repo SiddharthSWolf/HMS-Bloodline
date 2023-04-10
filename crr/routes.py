@@ -1,4 +1,4 @@
-from flask import flash, redirect, url_for, render_template, request, abort, Blueprint
+from flask import flash, redirect, url_for, render_template, request, abort, Blueprint, send_from_directory, jsonify
 from flask_login import login_user, current_user, logout_user, login_required
 from crr.forms import RegistrationForm, LoginForm, UpdateAccountForm, ReportForm, ReportUpdateForm, RequestResetForm, ResetPasswordForm, PrescribesForm, AppointmentForm, ProductForm,ProductUpdateForm
 from crr.models import User, Report, Prescribes, Appointment, Product
@@ -8,6 +8,8 @@ from datetime import datetime
 from flask_mail import Message
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+import os
+import json
 
 @app.route("/")
 @app.route("/index")
@@ -256,7 +258,7 @@ def delete_report(report_id):
     db.session.commit()
     flash('Your report has been deleted!', 'success')
     return redirect(url_for('home'))
- 
+
 def send_reset_email(user):
     token = user.get_reset_token()
     message = Mail(
@@ -306,3 +308,61 @@ def reset_token(token):
         return redirect(url_for('login'))
     return render_template('reset_token.html', title = 'Reset Password', form = form)
 
+
+#room hezky
+@app.route('/rooms.json', methods=['GET', 'POST', 'PUT'])
+def get_rooms():
+    json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates', 'rooms', 'rooms.json')
+    if request.method == 'PUT' or request.method == 'POST':
+        data = request.get_json()
+        if os.path.exists(json_path):
+            with open(json_path, 'w') as f:
+                json.dump(data, f)
+            return jsonify({'message': 'Rooms updated successfully'})
+        else:
+            return jsonify({'message': 'JSON file not found'})
+    else:
+        return send_from_directory(os.path.dirname(json_path), os.path.basename(json_path))
+
+
+@app.route('/rooms', methods=['GET', 'POST', 'PUT'])
+def update_rooms():
+    if request.method == 'PUT' or request.method == 'POST':
+        json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates', 'rooms', 'rooms.json')
+        data = request.get_json()
+        if os.path.exists(json_path):
+            with open(json_path, 'w') as f:
+                json.dump(data, f)
+            return jsonify({'message': 'Rooms updated successfully'})
+        else:
+            return jsonify({'message': 'JSON file not found'})
+        
+    return render_template('/rooms/rooms.html')
+
+    from flask import Flask, render_template
+
+#map hezky
+'''
+@app.route('/map')
+def map():
+    person_json_path = os.path.join(app.root_path, 'templates', 'maps', 'person.json')
+    people_json_path = os.path.join(app.root_path, 'templates', 'maps', 'people.json')
+    person_data = send_from_directory(os.path.dirname(person_json_path), os.path.basename(person_json_path))
+    people_data = send_from_directory(os.path.dirname(people_json_path), os.path.basename(people_json_path))
+    return render_template('map.html', person_data=person_data, people_data=people_data)
+'''
+@app.route('/places.json')
+def places():
+    return send_from_directory(os.path.join(app.root_path, 'templates/maps'), 'places.json')
+
+@app.route('/people.json')
+def people():
+    return send_from_directory(os.path.join(app.root_path, 'templates/maps'), 'people.json')
+
+@app.route('/map')
+def map():
+    return render_template('maps/map.html')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

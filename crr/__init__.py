@@ -1,4 +1,4 @@
-import ibm_db, ibm_db_sa, ibm_db_alembic
+#import ibm_db, ibm_db_sa, ibm_db_alembic
 import os
 from flask import Flask
 from flask_db2 import DB2

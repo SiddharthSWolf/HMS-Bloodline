@@ -1,0 +1,68 @@
+{
+  "people": [
+    {
+      "name": "John Doe",
+      "coordinates": [11.03876, 76.86357]
+    },
+    {
+      "name": "Jane Doe",
+      "coordinates": [11.04548, 76.84462]
+    },
+    {
+      "name": "Bob Smith",
+      "coordinates": [11.03013, 76.83423]
+    },
+    {
+      "name": "Alice Jones",
+      "coordinates": [11.06214, 76.85755]
+    },
+    {
+      "name": "Sam Lee",
+      "coordinates": [11.05095, 76.86707]
+    },
+    {
+      "name": "Emily Davis",
+      "coordinates": [11.04677, 76.83319]
+    },
+    {
+      "name": "Mike Brown",
+      "coordinates": [11.06747, 76.85612]
+    },
+    {
+      "name": "Mary Wilson",
+      "coordinates": [11.03287, 76.86932]
+    },
+    {
+      "name": "Tom Taylor",
+      "coordinates": [11.02821, 76.85388]
+    },
+    {
+      "name": "Sara Hernandez",
+      "coordinates": [11.05309, 76.84667]
+    },
+    {
+      "name": "Sid",
+      "coordinates": [11.078703660980747, 77.00332584676158]
+    },
+    {
+      "name": "Bob",
+      "coordinates": [11.062073, 76.913123]
+    },
+    {
+      "name": "Julie",
+      "coordinates": [11.062073, 76.913123]
+    },
+    {
+      "name": "Andrew",
+      "coordinates": [11.070904, 76.917507]
+    },
+    {
+      "name": "Kate",
+      "coordinates": [11.070904, 76.917507]
+    },
+    {
+      "name": "Alex",
+      "coordinates": [11.062947, 76.900002]
+    }
+  ]
+}
