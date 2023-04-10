@@ -1,119 +1,59 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Inventory Management System</title>
-    <style>
-      /* Style the body */
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-      }
+{%extends 'layout.html' %}
+{%block body%}
 
-      /* Style the header */
-      h1 {
-        background-color: #333;
-        color: white;
-        padding: 20px;
-        margin: 0;
-      }
+<div class = content-section>
+<table class ="content-table">
+    <thead>
+        <tr>
+            <th>S.No</th>
+            <th>Name</th>
+            <th>Product Code</th>
+            <th>Composition</th>
+            <th>Buy Date</th>
+            <th>Expiry Date</th>
+            <th>QT in cartons</th>
+            <th>Price per strip</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in Products %}
+<tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ product.name }}</td>
+    <td>{{ product.id }}</td>
+    <td>{{ product.composition }}</td>
+    <td>{{ product.bdate }}</td>
+    <td>{{ product.edate }}</td>
+    <td>{{ product.quantity }}</td>
+    <td>{{ product.price }}</td>
+    <td>
+        <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal{{ loop.index }}">Delete</button>
+    </td>
+</tr>
 
-      /* Style the form */
-      form {
-        display: inline-block;
-        margin-bottom: 20px;
-      }
+<!-- Modal -->
+<div class="modal fade" id="deleteModal{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ loop.index }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel{{ loop.index }}">Are you sure, you want to remove this item from the list?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                <form action="{{ url_for('delete_product', product_id=product.id) }}" method="POST">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 
-      label {
-        display: block;
-        margin-bottom: 10px;
-      }
-
-      input[type="text"],
-      input[type="number"] {
-        padding: 10px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-        width: 100%;
-      }
-
-      input[type="submit"] {
-        background-color: #333;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-
-      /* Style the table */
-      table {
-        border-collapse: collapse;
-        margin: 0 auto;
-      }
-
-      th,
-      td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: left;
-      }
-
-      th {
-        background-color: #333;
-        color: white;
-      }
-
-      /* Style the delete button */
-      form input[type="submit"] {
-        background-color: #f44336;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Inventory Management System</h1>
-
-    <h2>Add a New Product</h2>
-    <form method="POST" action="/add_product">
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name"><br><br>
-
-      <label for="description">Description:</label>
-      <input type="text" id="description" name="description"><br><br>
-
-      <label for="quantity">Quantity:</label>
-      <input type="number" id="quantity" name="quantity"><br><br>
-
-      <label for="price">Price:</label>
-      <input type="number" step="0.01" id="price" name="price"><br><br>
-
-      <input type="submit" value="Add Product">
-    </form>
-
-    <hr>
-
-    <h2>All Products</h2>
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Quantity</th>
-        <th>Price</th>
-        <th>Action</th>
-      </tr>
-      {% for product in Products %}
-      <tr>
-        <td>{{ product.name }}</td>
-        <td>{{ product.description }}</td>
-        <td>{{ product.quantity }}</td>
-        <td>{{ product.price }}</td>
-        <td>
-          <form method="POST" action="/delete_product/{{ product.id }}">
-            <input type="submit" value="Delete">
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </table>
-  </body>
-</html>
+</tbody>
+</table>
+</div>
+{%endblock%}
