@@ -212,7 +212,7 @@
             button.textContent = room.roomNumber;
             button.id = room.roomNumber;
             button.classList.add("room-button");
-            button.classList.add(room.isOccupied === "true" ? "occupied" : "vacant");
+            button.classList.add(room.isOccupied === true ? "occupied" : "vacant");
             roomButtons.appendChild(button);
           });
         })
@@ -327,6 +327,7 @@
               })
                 .then(() => {
                   console.log("Room details updated successfully!");
+                    document.location.reload();
                 })
                 .catch((error) => {
                   console.error("Error updating room details:", error);

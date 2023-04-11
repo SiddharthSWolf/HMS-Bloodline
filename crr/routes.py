@@ -339,7 +339,7 @@ def update_rooms():
         
     return render_template('/rooms/rooms.html')
 
-    from flask import Flask, render_template
+    
 
 #map hezky
 '''
