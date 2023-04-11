@@ -11,7 +11,7 @@ from sendgrid.helpers.mail import Mail
 import os
 import json
 
-@app.route("/")
+
 @app.route("/index")
 def index():
     if current_user.is_authenticated:
@@ -56,7 +56,7 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
-
+@app.route("/")
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
