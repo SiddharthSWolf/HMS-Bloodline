@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Get User Location using LeafletJS</title>
-
+    
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -32,15 +32,15 @@
 
 
     <style>
-      body,
-      .app {
-        margin: 5vw;
-        padding: 0;
+      .container      {
+        padding: 15px;
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        gap: 10px;
+      }
+      #live-coords{
+        margin-top: 20px;
       }
 
       #mapid {
@@ -66,6 +66,37 @@
     </style>
   </head>
   <body data-bs-theme="dark">
+
+    <!--Navigation Bar-->
+    <section id="navigation-bar">
+      <nav class="navbar navbar-expand-lg navbar-light" style="margin-left: 15px; padding: 10px;">
+
+        <a class="navbar-brand" href="#"><img src="/static/images/logo.jpeg" width="30" height="30" alt="Logo" class="d-inline-block align-text-top rounded-circle"></a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto" id="navbar-main">
+            <li class="nav-item">
+              <a class="nav-link" href="{{url_for('home')}}">HMS</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{url_for('products')}}">Inventory</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{url_for('new_report')}}">Bloodline</a>
+            </li>
+          </ul>
+        </div>
+        
+      </nav>
+  </section>
+
+
+  <div class="container">
     <div id="mapid" style="height: 500px"></div>
     <br />
     <br />
@@ -73,6 +104,48 @@
       <label for="latlong">Latitude, Longitude:</label>
       <input type="text" id="latlong" name="latlong" readonly />
     </div>
+  </div>
+
+    <footer class="footer" style="margin-top: 20px;">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 col-md-6 footer-col-1">
+            <h3>Download our app</h3>
+            <p>Download App for Android and IOS.</p>
+            <div class="app-logo">
+              <img src="/static/images/play-store.png" width="120" height="50" alt="Google Play Store">
+              <img src="/static/images/ios-store.png" width="120" height="50" alt="Apple App Store">
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 footer-col-2">
+            <img src="/static/images/logo.jpeg" width="120" height="120" alt="Logo">
+            <p>We aim at making it easier for you to work with us.</p>
+          </div>
+          <div class="col-lg-3 col-md-6 footer-col-3">
+            <h3>Useful links</h3>
+            <ul>
+              <li>Coupons</li>
+              <li>Blog Post</li>
+              <li>Return Policy</li>
+              <li>Joint Affiliate</li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-6 footer-col-4">
+            <h3>Follow us</h3>
+            <ul>
+              <li>Facebook</li>
+              <li>Twitter</li>
+              <li>Instagram</li>
+              <li>Youtube</li>
+            </ul>
+          </div>
+        </div>
+        <hr>
+        <p class="text-center">Copyright 2023
+        </p>
+      </div>
+    </footer>
+
 
     <script src="people.json"></script>
     <script src="places.json"></script>
@@ -146,7 +219,7 @@
             marker.setIcon(
               L.icon({
                 iconUrl:
-                  "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-black.png",
+                  "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-violet.png",
               })
             ); // Set the marker color to gray
 
