@@ -1,1 +1,36 @@
-{"rooms": [{"roomNumber": "101", "roomType": "Single", "costPerDay": 2000, "maxOccupancy": 1, "isOccupied": true, "amenities": ["TV", "Wi-Fi"], "patient": {"name": "John Doe", "age": 45, "gender": "Male", "admissionDate": "2023-04-10", "vacatingDate": "2023-04-15"}, "notes": "Patient is allergic to penicillin."}, {"roomNumber": "102", "roomType": "Double", "costPerDay": 2500, "maxOccupancy": 2, "isOccupied": false, "amenities": ["TV", "Wi-Fi", "Refrigerator"], "patient": {"name": null, "age": null, "gender": null, "admissionDate": null, "vacatingDate": null}, "notes": null}]}
+{
+  "rooms": [
+    {
+      "roomNumber": "101",
+      "roomType": "Single",
+      "costPerDay": 2000,
+      "maxOccupancy": 1,
+      "isOccupied": true,
+      "amenities": ["TV", "Wi-Fi"],
+      "patient": {
+        "name": "John Doe",
+        "age": 45,
+        "gender": "Male",
+        "admissionDate": "2023-04-10",
+        "vacatingDate": "2023-04-15"
+      },
+      "notes": "Patient is allergic to penicillin."
+    },
+    {
+      "roomNumber": "102",
+      "roomType": "Double",
+      "costPerDay": 2500,
+      "maxOccupancy": 2,
+      "isOccupied": false,
+      "amenities": ["TV", "Wi-Fi", "Refrigerator"],
+      "patient": {
+        "name": null,
+        "age": null,
+        "gender": null,
+        "admissionDate": null,
+        "vacatingDate": null
+      },
+      "notes": null
+    }
+  ]
+}
